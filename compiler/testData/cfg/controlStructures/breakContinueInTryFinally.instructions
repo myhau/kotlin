@@ -33,8 +33,10 @@ L12 [condition entry point]:
     magic[VALUE_CONSUMER](true|<v2>) -> <v3>
 L10 [body entry point]:
   5 mark({ continue@outer })
+    jmp?(L7)                                                                                                    NEXT:[mark({ break }), mark({ break })]
 L13 [start finally]:
   6 mark({ break })
+    jmp?(L7)                                                                                                    NEXT:[mark({ break }), jmp(L3)]
     jmp(L3)                                                                                                     NEXT:[read (Unit)]
 L14 [finish finally]:
 - 5 jmp(L6)                                                                                                     NEXT:[r(true) -> <v0>]                                                                                             PREV:[]
@@ -44,11 +46,13 @@ L11 [body exit point]:
 -   read (Unit)                                                                                                 PREV:[]
 - 3 jmp(L15)                                                                                                    NEXT:[mark({ break })]                                                                                             PREV:[]
 L7 [onExceptionToFinallyBlock]:
-  6 mark({ break })                                                                                             PREV:[jmp?(L7)]
+  6 mark({ break })                                                                                             PREV:[jmp?(L7), jmp?(L7), jmp?(L7), jmp?(L7)]
+    jmp?(L7)                                                                                                    NEXT:[mark({ break }), jmp(L3)]
     jmp(L3)                                                                                                     NEXT:[read (Unit)]
 - 3 jmp(error)                                                                                                  NEXT:[<ERROR>]                                                                                                     PREV:[]
 L15 [skipFinallyToErrorBlock]:
 - 6 mark({ break })                                                                                             PREV:[]
+-   jmp?(L7)                                                                                                    NEXT:[mark({ break }), jmp(L3)]                                                                                    PREV:[]
 -   jmp(L3)                                                                                                     NEXT:[read (Unit)]                                                                                                 PREV:[]
 - 3 merge(try { while (true) { continue@outer } } finally { break }|!<v6>) -> <v7>                              PREV:[]
 - 2 jmp(L2)                                                                                                     NEXT:[r(true) -> <v0>]                                                                                             PREV:[]
@@ -100,8 +104,10 @@ L12 [condition entry point]:
     magic[VALUE_CONSUMER](true|<v2>) -> <v3>
 L10 [body entry point]:
   5 mark({ continue@outer })
+    jmp?(L7)                                                                                            NEXT:[mark({ return "OK" }), mark({ return "OK" })]
 L13 [start finally]:
   6 mark({ return "OK" })
+    jmp?(L7)                                                                                            NEXT:[mark({ return "OK" }), mark("OK")]
     mark("OK")
     r("OK") -> <v4>
     ret(*|<v4>) L1                                                                                      NEXT:[<END>]
@@ -113,13 +119,15 @@ L11 [body exit point]:
 -   read (Unit)                                                                                         PREV:[]
 - 3 jmp(L15)                                                                                            NEXT:[mark({ return "OK" })]                                                                               PREV:[]
 L7 [onExceptionToFinallyBlock]:
-  6 mark({ return "OK" })                                                                               PREV:[jmp?(L7)]
+  6 mark({ return "OK" })                                                                               PREV:[jmp?(L7), jmp?(L7), jmp?(L7), jmp?(L7)]
+    jmp?(L7)                                                                                            NEXT:[mark({ return "OK" }), mark("OK")]
     mark("OK")
     r("OK") -> <v4>
     ret(*|<v4>) L1                                                                                      NEXT:[<END>]
 - 3 jmp(error)                                                                                          NEXT:[<ERROR>]                                                                                             PREV:[]
 L15 [skipFinallyToErrorBlock]:
 - 6 mark({ return "OK" })                                                                               PREV:[]
+-   jmp?(L7)                                                                                            NEXT:[mark({ return "OK" }), mark("OK")]                                                                   PREV:[]
 -   mark("OK")                                                                                          PREV:[]
 -   r("OK") -> <v4>                                                                                     PREV:[]
 -   ret(*|<v4>) L1                                                                                      NEXT:[<END>]                                                                                               PREV:[]

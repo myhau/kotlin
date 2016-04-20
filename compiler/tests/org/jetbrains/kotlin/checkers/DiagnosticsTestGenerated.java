@@ -3453,6 +3453,12 @@ public class DiagnosticsTestGenerated extends AbstractDiagnosticsTest {
                 doTest(fileName);
             }
 
+            @TestMetadata("tryWithAssignmentUsedInCatch.kt")
+            public void testTryWithAssignmentUsedInCatch() throws Exception {
+                String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/tryWithAssignmentUsedInCatch.kt");
+                doTest(fileName);
+            }
+
             @TestMetadata("uninitializedInLocalDeclarations.kt")
             public void testUninitializedInLocalDeclarations() throws Exception {
                 String fileName = KotlinTestUtils.navigationMetadata("compiler/testData/diagnostics/tests/controlFlowAnalysis/uninitializedInLocalDeclarations.kt");
