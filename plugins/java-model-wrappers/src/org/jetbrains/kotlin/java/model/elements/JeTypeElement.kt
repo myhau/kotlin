@@ -37,13 +37,14 @@ class JeTypeElement(override val psi: PsiClass) : JeElement, TypeElement, JeAnno
 
     override fun getQualifiedName() = JeName(psi.qualifiedName)
 
-    private fun getSuperType(superTypes: Array<PsiClassType>, superClass: PsiClass): PsiClassType? {
+    private fun getSuperType(superTypes: Array<PsiClassType>, superClass: PsiClass): PsiClassType {
         return superTypes.firstOrNull { it is PsiClassReferenceType && it.resolve() == superClass }
+               ?: PsiTypesUtil.getClassType(superClass)
     }
     
     override fun getSuperclass(): TypeMirror {
         val superClass = psi.superClass ?: return JeNoneType
-        val psiType = getSuperType(psi.superTypes, superClass) ?: return JeNoneType
+        val psiType = getSuperType(psi.superTypes, superClass)
         return psiType.toJeType(psi.manager)
     }
 
@@ -52,7 +53,7 @@ class JeTypeElement(override val psi: PsiClass) : JeElement, TypeElement, JeAnno
         val interfaces = mutableListOf<TypeMirror>()
         
         for (intf in psi.interfaces) {
-            val psiType = getSuperType(superTypes, intf) ?: continue
+            val psiType = getSuperType(superTypes, intf)
             interfaces += psiType.toJeType(psi.manager)
         }
         

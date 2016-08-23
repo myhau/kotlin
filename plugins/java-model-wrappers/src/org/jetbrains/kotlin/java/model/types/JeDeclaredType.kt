@@ -20,6 +20,7 @@ import com.intellij.pom.java.LanguageLevel
 import com.intellij.psi.*
 import com.intellij.psi.impl.light.LightClassReferenceExpression
 import com.intellij.psi.impl.source.PsiClassReferenceType
+import com.intellij.psi.impl.source.PsiImmediateClassType
 import com.intellij.psi.util.PsiTypesUtil
 import org.jetbrains.kotlin.java.model.elements.JeTypeElement
 import org.jetbrains.kotlin.java.model.internal.isStatic
@@ -49,10 +50,22 @@ class JeDeclaredType(
         get() = psiClass.manager
 
     override fun getTypeArguments(): List<TypeMirror> {
-        if (psiType.isRaw) return emptyList()
-        
         return when (psiType) {
-            is PsiClassReferenceType -> psiType.parameters.map { it.toJeType(psiManager) }
+            is PsiClassType -> {
+                val substitutor = psiType.resolveGenerics().substitutor
+                val psiClass = psiType.resolve() ?: return psiType.parameters.map { it.toJeType(psiManager) }
+                
+                val args = mutableListOf<TypeMirror>()
+                for (typeParameter in psiClass.typeParameters) {
+                    val substitutedParameter = substitutor.substitute(typeParameter)
+                    if (substitutedParameter != null)
+                        args += substitutedParameter.toJeType(psiManager)
+                    else
+                        args += JeTypeVariableType(PsiTypesUtil.getClassType(typeParameter), typeParameter)
+                }
+                
+                args
+            }
             else -> emptyList()
         }
     }
