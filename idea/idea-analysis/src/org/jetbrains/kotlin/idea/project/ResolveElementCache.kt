@@ -71,12 +71,10 @@ class ResolveElementCache(
 
     // drop whole cache after change "out of code block"
     private val fullResolveCache: CachedValue<MutableMap<KtElement, CachedFullResolve>> = CachedValuesManager.getManager(project).createCachedValue(
-            object : CachedValueProvider<MutableMap<KtElement, CachedFullResolve>> {
-                override fun compute(): CachedValueProvider.Result<MutableMap<KtElement, CachedFullResolve>> {
-                    return CachedValueProvider.Result.create(ContainerUtil.createConcurrentSoftValueMap<KtElement, CachedFullResolve>(),
-                                                             PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
-                                                             resolveSession.exceptionTracker)
-                }
+            CachedValueProvider<MutableMap<KtElement, ResolveElementCache.CachedFullResolve>> {
+                CachedValueProvider.Result.create(ContainerUtil.createConcurrentSoftValueMap<KtElement, CachedFullResolve>(),
+                                                  PsiModificationTracker.OUT_OF_CODE_BLOCK_MODIFICATION_COUNT,
+                                                  resolveSession.exceptionTracker)
             },
             false)
 
@@ -94,12 +92,10 @@ class ResolveElementCache(
     }
 
     private val partialBodyResolveCache: CachedValue<MutableMap<KtExpression, CachedPartialResolve>> = CachedValuesManager.getManager(project).createCachedValue(
-            object : CachedValueProvider<MutableMap<KtExpression, CachedPartialResolve>> {
-                override fun compute(): CachedValueProvider.Result<MutableMap<KtExpression, CachedPartialResolve>> {
-                    return CachedValueProvider.Result.create(ContainerUtil.createConcurrentSoftValueMap<KtExpression, CachedPartialResolve>(),
-                                                             PsiModificationTracker.MODIFICATION_COUNT,
-                                                             resolveSession.exceptionTracker)
-                }
+            CachedValueProvider<kotlin.collections.MutableMap<KtExpression, ResolveElementCache.CachedPartialResolve>> {
+                CachedValueProvider.Result.create(ContainerUtil.createConcurrentSoftValueMap<KtExpression, CachedPartialResolve>(),
+                                                         PsiModificationTracker.MODIFICATION_COUNT,
+                                                         resolveSession.exceptionTracker)
             },
             false)
 
@@ -309,7 +305,7 @@ class ResolveElementCache(
 
             is KtTypeConstraint -> typeConstraintAdditionalResolve(resolveSession, resolveElement)
 
-            is KtCodeFragment -> codeFragmentAdditionalResolve(resolveSession, resolveElement, bodyResolveMode)
+            is KtCodeFragment -> codeFragmentAdditionalResolve(resolveElement, bodyResolveMode)
 
             else -> {
                 if (resolveElement.getParentOfType<KtPackageDirective>(true) != null) {
@@ -357,7 +353,7 @@ class ResolveElementCache(
         return resolveSession.trace
     }
 
-    private fun codeFragmentAdditionalResolve(resolveSession: ResolveSession, codeFragment: KtCodeFragment, bodyResolveMode: BodyResolveMode): BindingTrace {
+    private fun codeFragmentAdditionalResolve(codeFragment: KtCodeFragment, bodyResolveMode: BodyResolveMode): BindingTrace {
         val trace = createDelegatingTrace(codeFragment)
 
         val contextResolveMode = if (bodyResolveMode == BodyResolveMode.PARTIAL)
