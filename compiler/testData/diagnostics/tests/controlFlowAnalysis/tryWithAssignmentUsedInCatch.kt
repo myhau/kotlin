@@ -18,3 +18,19 @@ fun g() {
         foo.hashCode()
     }
 }
+
+fun h() {
+    try {
+
+    }
+    finally {
+        var foo = 1
+        try {
+            foo = 2
+            g()
+        }
+        catch (e: Throwable) {
+            foo.hashCode()
+        }
+    }
+}

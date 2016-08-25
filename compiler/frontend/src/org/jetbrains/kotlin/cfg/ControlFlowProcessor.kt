@@ -103,7 +103,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         builder.bindLabel(afterDeclaration)
     }
 
-    private class CatchFinallyLabels(val onException: Label?, val toFinally: Label?, val tryExpression: KtTryExpression)
+    private class CatchFinallyLabels(val onException: Label?, val toFinally: Label?, val tryExpression: KtTryExpression?)
 
     private inner class CFPVisitor(private val builder: ControlFlowBuilder) : KtVisitorVoid() {
 
@@ -570,9 +570,11 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
 
             fun generate() {
                 val finalExpression = finallyBlock?.finalExpression ?: return
+                catchFinallyStack.push(CatchFinallyLabels(null, null, null))
                 startFinally?.let {
                     assert(finishFinally != null) { "startFinally label is set to $startFinally but finishFinally label is not set" }
                     builder.repeatPseudocode(it, finishFinally!!)
+                    catchFinallyStack.pop()
                     return
                 }
                 builder.createUnboundLabel("start finally").let {
@@ -584,6 +586,7 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
                     finishFinally = it
                     builder.bindLabel(it)
                 }
+                catchFinallyStack.pop()
             }
         }
 
@@ -1136,11 +1139,13 @@ class ControlFlowProcessor(private val trace: BindingTrace) {
         private fun generateJumpsToCatchAndFinally() {
             if (catchFinallyStack.isNotEmpty()) {
                 with(catchFinallyStack.peek()) {
-                    onException?.let {
-                        builder.nondeterministicJump(it, tryExpression, null)
-                    }
-                    toFinally?.let {
-                        builder.nondeterministicJump(it, tryExpression, null)
+                    if (tryExpression != null) {
+                        onException?.let {
+                            builder.nondeterministicJump(it, tryExpression, null)
+                        }
+                        toFinally?.let {
+                            builder.nondeterministicJump(it, tryExpression, null)
+                        }
                     }
                 }
             }

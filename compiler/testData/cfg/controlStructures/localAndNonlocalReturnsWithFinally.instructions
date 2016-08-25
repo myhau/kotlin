@@ -81,8 +81,7 @@ L7 [body entry point]:
 L6 [loop exit point]:
 L8 [body exit point]:
     read (Unit)                                                                                                           PREV:[jmp?(L6)]
-  4 jmp?(L2)                                                                                                              NEXT:[mark({ for (i in 1..2) { } return bar() }), mark(bar())]
-    mark(bar())
+  4 mark(bar())
     call(bar(), bar) -> <v9>
     ret(*|<v9>) L1                                                                                                        NEXT:[<END>]
 L10 [finish finally]:
@@ -103,7 +102,7 @@ L12 [after local declaration]:
     call(let { return it }, let|<v13>, <v14>) -> <v15>
   2 jmp(L20)                                                                                                              NEXT:[mark({ for (i in 1..2) { } return bar() })]
 L2 [onExceptionToFinallyBlock]:
-  4 mark({ for (i in 1..2) { } return bar() })                                                                            PREV:[jmp?(L2), jmp?(L2), jmp?(L2), jmp?(L2), jmp?(L2), jmp?(L2)]
+  4 mark({ for (i in 1..2) { } return bar() })                                                                            PREV:[jmp?(L2), jmp?(L2)]
   5 r(1) -> <v5>
     r(2) -> <v6>
     mark(1..2)
@@ -122,8 +121,7 @@ L23 [copy of L7, body entry point]:
 L22 [copy of L6, loop exit point]:
 L24 [copy of L8, body exit point]:
     read (Unit)                                                                                                           PREV:[jmp?(L22)]
-  4 jmp?(L2)                                                                                                              NEXT:[mark({ for (i in 1..2) { } return bar() }), mark(bar())]
-    mark(bar())
+  4 mark(bar())
     call(bar(), bar) -> <v9>
     ret(*|<v9>) L1                                                                                                        NEXT:[<END>]
 - 2 jmp(error)                                                                                                            NEXT:[<ERROR>]                                                                                                   PREV:[]
@@ -147,8 +145,7 @@ L28 [copy of L7, body entry point]:
 L27 [copy of L6, loop exit point]:
 L29 [copy of L8, body exit point]:
     read (Unit)                                                                                                           PREV:[jmp?(L27)]
-  4 jmp?(L2)                                                                                                              NEXT:[mark({ for (i in 1..2) { } return bar() }), mark(bar())]
-    mark(bar())
+  4 mark(bar())
     call(bar(), bar) -> <v9>
     ret(*|<v9>) L1                                                                                                        NEXT:[<END>]
 - 2 merge(try { if (n < 0) return 0 n.let { return it } } finally { for (i in 1..2) { } return bar() }|<v15>) -> <v16>    PREV:[]
@@ -185,8 +182,7 @@ L17 [copy of L7, body entry point]:
 L16 [copy of L6, loop exit point]:
 L18 [copy of L8, body exit point]:
     read (Unit)                                       PREV:[jmp?(L16)]
-  4 jmp?(L2)                                          NEXT:[mark({ for (i in 1..2) { } return bar() }), mark(bar())]
-    mark(bar())
+  4 mark(bar())
     call(bar(), bar) -> <v9>
     ret(*|<v9>) L1                                    NEXT:[<END>]
 - 5 ret(*|<v0>) L1                                    NEXT:[<END>]                                                          PREV:[]

@@ -694,21 +694,18 @@ L0:
     r(1) -> <v0>
 L3 [start finally]:
   4 mark({ return 2 })
-    jmp?(L2)                                                      NEXT:[mark({ return 2 }), r(2) -> <v1>]
     r(2) -> <v1>
     ret(*|<v1>) L1                                                NEXT:[<END>]
 L4 [finish finally]:
 - 3 ret(*|<v0>) L1                                                NEXT:[<END>]                                              PREV:[]
 - 2 jmp(L5)                                                       NEXT:[mark({ return 2 })]                                 PREV:[]
 L2 [onExceptionToFinallyBlock]:
-  4 mark({ return 2 })                                            PREV:[jmp?(L2), jmp?(L2), jmp?(L2), jmp?(L2)]
-    jmp?(L2)                                                      NEXT:[mark({ return 2 }), r(2) -> <v1>]
+  4 mark({ return 2 })                                            PREV:[jmp?(L2), jmp?(L2)]
     r(2) -> <v1>
     ret(*|<v1>) L1                                                NEXT:[<END>]
 - 2 jmp(error)                                                    NEXT:[<ERROR>]                                            PREV:[]
 L5 [skipFinallyToErrorBlock]:
 - 4 mark({ return 2 })                                            PREV:[]
--   jmp?(L2)                                                      NEXT:[mark({ return 2 }), r(2) -> <v1>]                   PREV:[]
 -   r(2) -> <v1>                                                  PREV:[]
 -   ret(*|<v1>) L1                                                NEXT:[<END>]                                              PREV:[]
 - 2 merge(try { return 1 } finally { return 2 }|!<v3>) -> <v4>    PREV:[]
