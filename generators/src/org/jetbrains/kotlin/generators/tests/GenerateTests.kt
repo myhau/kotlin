@@ -1093,12 +1093,12 @@ fun main(args: Array<String>) {
     generateTestDataForReservedWords()
 
     testGroup("js/js.tests/test", "js/js.translator/testData") {
-        testClass<AbstractReservedWordTest>() {
-            model("reservedWords/cases")
+        testClass<AbstractBoxJsTest>() {
+            model("box/", pattern = "^([^_](.+))\\.kt$")
         }
 
-        testClass<AbstractCallableReferenceTest> {
-            model("callableReference/")
+        testClass<AbstractReservedWordTest>() {
+            model("reservedWords/cases")
         }
 
         testClass<AbstractDynamicTest>() {
@@ -1107,10 +1107,6 @@ fun main(args: Array<String>) {
 
         testClass<AbstractMultiModuleTest>() {
             model("multiModule/cases")
-        }
-
-        testClass<AbstractInlineJsTest>() {
-            model("inline/cases")
         }
 
         testClass<AbstractInlineJsStdlibTest>() {
