@@ -1126,7 +1126,7 @@ fun main(args: Array<String>) {
         }
 
         testClass<AbstractInlineMultiModuleTest>() {
-            model("inlineMultiModule/cases", extension = null, recursive = false)
+            model("inlineMultiModule/cases")
         }
 
         testClass<AbstractLabelTest>() {
