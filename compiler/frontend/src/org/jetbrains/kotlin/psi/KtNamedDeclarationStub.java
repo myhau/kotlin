@@ -45,6 +45,11 @@ abstract class KtNamedDeclarationStub<T extends KotlinStubWithFqName<?>> extends
     }
 
     @Override
+    public String toString() {
+        return getElementType().toString() + ":" + getName();
+    }
+
+    @Override
     public String getName() {
         T stub = getStub();
         if (stub != null) {
